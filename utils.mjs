@@ -28,12 +28,15 @@ export function isDuneMissing() {
 
 export function parseConfig() {
   try {
-    const config = fs.readFileSync(findConfigPath(), "utf8");
-    return TOML.parse(config);
+    debug("Parsing toml config...");
+    const configToml = fs.readFileSync(findConfigPath(), "utf8");
+    debug("Config TOML:\n\n", configToml);
+    const configJson = TOML.parse(configToml);
+    debug("Config JSON:", configJson);
+    return configJson;
   } catch (err) {
     if (err?.code === "ENOENT") {
-      console.log("Could not find a mycaml.toml file in this directory.");
-      return;
+      throw new Error("Could not find a mycaml.toml file in this directory.");
     }
     throw err;
   }
@@ -41,10 +44,29 @@ export function parseConfig() {
 
 export function writeConfig(configJson) {
   // TODO: check for file before writing new one
+  debug("Writing toml config to disk...");
   const tomlStr = TOML.stringify(configJson);
+  if (isDryRun()) {
+    debug("Dry run flag found, skipping toml write");
+    debug(tomlStr);
+    return;
+  }
   fs.writeFileSync(findConfigPath(), tomlStr);
 }
 
 function findConfigPath() {
   return `${process.cwd()}/${CONFIG_FILENAME}`;
+}
+
+export function debug(...args) {
+  console.log(...args);
+}
+
+export function isDryRun() {
+  return !!process.env.MYCAML_DRY_RUN;
+}
+
+export function updateOpam() {
+  // TODO: check for last opam update and run
+  console.log("TODO");
 }

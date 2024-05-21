@@ -1,6 +1,7 @@
 import { program } from "commander";
 
 import { add, build, run, shell } from "./commands/index.mjs";
+import { debug } from "./utils.mjs";
 
 program.name("ocaml").description("OCaml Command Line Tool").version("0.1.0");
 
@@ -11,6 +12,7 @@ program
   .command(add.COMMAND)
   .description(add.DESCRIPTION)
   .option("--dev", "Add as dev dependency")
+  .option("--test", "Add as test dependency")
   .action(add.handler);
 
 program
