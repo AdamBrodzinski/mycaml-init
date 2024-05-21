@@ -2,7 +2,7 @@ import { parseConfig, writeConfig, debug, isDuneMissing, updateOpam } from "../u
 import { spawn } from "child_process";
 
 const COMMAND = "add <package> <version>";
-const DESCRIPTION = "Add packages to your project, optionally as dev dependencies";
+const DESCRIPTION = "Add an opam package to your project";
 
 async function handler(packageName, version, options) {
   if (await isDuneMissing()) return;

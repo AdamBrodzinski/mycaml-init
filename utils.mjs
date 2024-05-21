@@ -59,7 +59,9 @@ function findConfigPath() {
 }
 
 export function debug(...args) {
-  console.log(...args);
+  if (!!process.env.MYCAML_VERBOSE) {
+    console.log(...args);
+  }
 }
 
 export function isDryRun() {

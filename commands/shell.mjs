@@ -7,9 +7,9 @@ const UTOP_MISSING_MSG =
   "utop is required and is not installed. Please run `opam install utop` and try again";
 
 async function handler(_args) {
-  if (await isCommandMissing("utopp", UTOP_MISSING_MSG)) return;
+  if (await isCommandMissing("utop", UTOP_MISSING_MSG)) return;
 
-  const utop = spawn("utopp", { stdio: "inherit" });
+  const utop = spawn("utop", { stdio: "inherit" });
 
   utop.on("error", (error) => {
     console.log("Failed to start subprocess.");
