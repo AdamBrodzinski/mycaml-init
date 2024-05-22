@@ -4,13 +4,14 @@ import { isDuneMissing } from "../utils.mjs";
 const COMMAND = "build";
 const DESCRIPTION = "Build your project with Dune";
 
-async function handler(_args, _options, _command) {
+async function handler(opts, _command) {
   if (await isDuneMissing()) return;
+  const options = opts.watch ? ["-w"] : [];
 
   const hasDoubleDash = process.argv.includes("--");
   const duneArgs = hasDoubleDash ? process.argv.slice(process.argv.indexOf("--") + 1) : [];
 
-  const utop = spawn("dune", ["build", ...duneArgs], { stdio: "inherit" });
+  const utop = spawn("dune", ["build", ...options, ...duneArgs], { stdio: "inherit" });
 
   utop.on("error", (error) => {
     console.log("Failed to start subprocess.");
