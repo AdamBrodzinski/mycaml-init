@@ -4,7 +4,7 @@ import { isCommandMissing } from "../utils.mjs";
 const COMMAND = "shell";
 const DESCRIPTION = "Start an OCaml shell";
 const UTOP_MISSING_MSG =
-  "utop is required and is not installed. Please run `opam install utop` and try again";
+  "utop is an enhanced shell for OCaml and was not found. Please run `opam install utop` and try again";
 
 async function handler(_args) {
   if (await isCommandMissing("utop", UTOP_MISSING_MSG)) return;
