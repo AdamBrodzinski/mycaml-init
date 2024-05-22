@@ -26,6 +26,10 @@ export function isDuneMissing() {
   return isCommandMissing("dune", DUNE_MISSING_MSG);
 }
 
+export function print(...args) {
+  console.log(...args);
+}
+
 export function parseConfig() {
   try {
     debug("Parsing toml config...");
@@ -36,7 +40,7 @@ export function parseConfig() {
     return configJson;
   } catch (err) {
     if (err?.code === "ENOENT") {
-      throw new Error("Could not find a mycaml.toml file in this directory.");
+      throw new Error("Could not find a mycaml.toml file in this directory, expected it to exist");
     }
     throw err;
   }

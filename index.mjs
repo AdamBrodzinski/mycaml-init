@@ -9,7 +9,11 @@ program
   .description(build.DESCRIPTION)
   .option("-w, --watch", "Automatically rebuild on change")
   .action(build.handler);
-program.command(run.COMMAND).description(run.DESCRIPTION).action(run.handler);
+program
+  .command(run.COMMAND)
+  .description(run.DESCRIPTION)
+  .option("-w, --watch", "Automatically restart on change")
+  .action(run.handler);
 program
   .command(add.COMMAND)
   .description(add.DESCRIPTION)
