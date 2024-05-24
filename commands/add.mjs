@@ -1,5 +1,6 @@
 import { parseConfig, writeConfig, debug, isDuneMissing, updateOpam } from "../utils.mjs";
 import { spawn } from "child_process";
+import { print } from "../utils.mjs";
 
 const COMMAND = "add <package> <version>";
 const DESCRIPTION = "Add an opam package to your project";
@@ -57,16 +58,19 @@ async function handler(packageName, version, options) {
   writeConfig(configJson);
   updateOpam();
 
-  // TODO: handle <= and =
-  const utop = spawn("opam", ["install", `${packageName}.${version}`, ...opamArgs], {
+  const packageNameVersion = version.match(/^\d/)
+    ? `${packageName}.${version}`.replace(/\s/g, "")
+    : `${packageName}${version}`.replace(/\s/g, "");
+
+  spawn("opam", ["install", packageNameVersion, ...opamArgs], {
     stdio: "inherit",
   })
-    .on("error", console.log)
+    .on("error", print)
     .on("exit", (code, signal) => {
-      if (code) console.log(`Process exit code: ${code}`);
-      if (signal) console.log(`Process killed with signal: ${signal}`);
+      if (code) print(`Process exit code: ${code}`);
+      if (signal) print(`Process killed with signal: ${signal}`);
       if (code === 0) {
-        console.log("Process completed successfully.");
+        print("Process completed successfully.");
       }
     });
 }
