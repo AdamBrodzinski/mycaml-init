@@ -1,0 +1,6 @@
+# see `$ ocamlformat help` for more configuration
+
+profile = default 
+break-separators = after
+type-decl = sparse
+if-then-else = compact
