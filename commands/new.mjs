@@ -4,39 +4,87 @@ import { execSync } from "child_process";
 import { fileURLToPath } from "url";
 import { isDuneMissing } from "../utils.mjs";
 import { print, debug } from "../utils.mjs";
+import inquirer from "inquirer";
 
 const MODULE_DIR = path.dirname(fileURLToPath(import.meta.url));
 const TEMPLATE_DIR = path.resolve(MODULE_DIR, "../templates");
-const COMMAND = "new <project_name>";
+const COMMAND = "new";
 const DESCRIPTION = "Create new project from template";
 
-async function handler(projectName, opts, _command) {
+async function handler() {
   if (await isDuneMissing()) return;
 
-  projectName = projectName.toLowerCase();
-  print("Generating project", projectName, "...");
+  inquirer
+    .prompt([
+      {
+        type: "list",
+        name: "template",
+        message: `
+----------------- Please choose a starting template -----------------
+Minimal executable:
+  only contains enough scaffolding to print hello world
 
-  debug("MODULE_DIR", MODULE_DIR);
-  debug("TEMPLATE_DIR", TEMPLATE_DIR);
+OCaml library:
+  a minimal config to produce your own library (internal or opam)
 
-  if (isNameInvalid(projectName)) {
-    print(
-      "Project name is invalid. Name must start with a-z and the following characters can be a-z, _, or 0-9",
-    );
-    return;
-  }
+JSON API:
+  a minimal REST endpoint app using the Dream framework. Includes a fly.io
+  docker file, logging, JSON parsing library, and optional Postgres database
 
-  const projectDir = `${process.cwd()}/${projectName}`;
-  debug("Project directory", projectDir);
-  if (fs.existsSync(projectDir)) {
-    print(`Project folder "${projectName}" already exists. Exiting`);
-    return;
-  }
+Htmx wep app:
+  a minimal html app using the Dream framework. Includes a fly.io docker 
+  file, logging, html & htmx libraries, and optional Postgres database
 
-  createBasicProject({ projectDir, projectName });
-  print(
-    `Project created! change into the directory ${projectName} and run "mycaml build" and "mycaml run" to run the project`,
-  );
+Riot stack:
+  a multi-core scheduler based on the Erlang/Elixr runtime that brings
+  massive concurrency to the OCaml platform. Currently experimental and
+  not production ready.
+
+Advent of Code starter:
+  boilerplate with common libraries needed to complete the Advent of Code
+\n`,
+        choices: [
+          "Minimal executible",
+          "OCaml library",
+          "JSON API",
+          "Htmx web app",
+          "Riot stack",
+          "Advent of Code starter",
+        ],
+      },
+      {
+        name: "projectName",
+        message: "What is your project name? (lowercase & underscore)",
+        default: "app",
+      },
+    ])
+    .then((answers) => {
+      const projectName = answers.projectName.trim().toLowerCase();
+
+      print("Generating project", projectName, "...");
+
+      debug("MODULE_DIR", MODULE_DIR);
+      debug("TEMPLATE_DIR", TEMPLATE_DIR);
+
+      if (isNameInvalid(projectName)) {
+        print(
+          "Project name is invalid. Name must start with a-z and the following characters can be a-z, _, or 0-9",
+        );
+        return;
+      }
+
+      const projectDir = `${process.cwd()}/${projectName}`;
+      debug("Project directory", projectDir);
+      if (fs.existsSync(projectDir)) {
+        print(`Project folder "${projectName}" already exists. Exiting`);
+        return;
+      }
+
+      createBasicProject({ projectDir, projectName });
+      print(
+        `Project created! change into the directory ${projectName} and run "mycaml build" and "mycaml run" to run the project`,
+      );
+    });
 }
 
 export const new_ = {

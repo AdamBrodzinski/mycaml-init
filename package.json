@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "commander": "^12.0.0",
+    "inquirer": "^9.2.22",
     "s-tier": "^1.0.1",
     "smol-toml": "^1.2.0"
   }
