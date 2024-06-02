@@ -2,14 +2,17 @@ import fs from "fs";
 import path from "path";
 import { execSync } from "child_process";
 import { fileURLToPath } from "url";
-import { isDuneMissing } from "../utils.mjs";
-import { print, debug } from "../utils.mjs";
 import inquirer from "inquirer";
+
+import { isDuneMissing } from "../shared/platform.mjs";
+import { print, debug } from "../shared/logger.mjs";
 
 const MODULE_DIR = path.dirname(fileURLToPath(import.meta.url));
 const TEMPLATE_DIR = path.resolve(MODULE_DIR, "../templates");
-const COMMAND = "new";
-const DESCRIPTION = "Create new project from template";
+
+export function attachCommandNew(program) {
+  program.command("new").description("Create new project from template").action(handler);
+}
 
 async function handler() {
   if (await isDuneMissing()) return;
@@ -86,12 +89,6 @@ Advent of Code starter:
       );
     });
 }
-
-export const new_ = {
-  COMMAND,
-  DESCRIPTION,
-  handler,
-};
 
 function createBasicProject({ projectDir, projectName }) {
   const template = `${TEMPLATE_DIR}/basic`;

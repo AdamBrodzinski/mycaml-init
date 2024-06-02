@@ -1,9 +1,17 @@
-import { parseConfig, writeConfig, debug, isDuneMissing, updateOpam } from "../utils.mjs";
+import { isDuneMissing } from "../shared/platform.mjs";
+import { parseConfig, writeConfig } from "../shared/config.mjs";
+import { updateOpam } from "../shared/platform.mjs";
+import { print, debug } from "../shared/logger.mjs";
 import { spawn } from "child_process";
-import { print } from "../utils.mjs";
 
-const COMMAND = "add <package> <version>";
-const DESCRIPTION = "Add an opam package to your project";
+export function attachCommandAdd(program) {
+  program
+    .command("add <package> <version>")
+    .description("Add an opam package to your project")
+    .option("--dev", "Add as dev dependency")
+    .option("--test", "Add as test dependency")
+    .action(handler);
+}
 
 async function handler(packageName, version, options) {
   if (await isDuneMissing()) return;
@@ -74,9 +82,3 @@ async function handler(packageName, version, options) {
       }
     });
 }
-
-export const add = {
-  COMMAND,
-  DESCRIPTION,
-  handler,
-};

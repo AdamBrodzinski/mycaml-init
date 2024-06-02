@@ -1,13 +1,12 @@
 import { spawn } from "child_process";
-import { isCommandMissing } from "../utils.mjs";
+import { isUtopMissing } from "../shared/platform.mjs";
 
-const COMMAND = "shell";
-const DESCRIPTION = "Start an OCaml shell";
-const UTOP_MISSING_MSG =
-  "utop is an enhanced shell for OCaml and was not found. Please run `opam install utop` and try again";
+export function attachCommandShell(program) {
+  program.command("shell").description("Start an OCaml shell").action(handler);
+}
 
 async function handler(_args) {
-  if (await isCommandMissing("utop", UTOP_MISSING_MSG)) return;
+  if (await isUtopMissing()) return;
 
   const utop = spawn("utop", { stdio: "inherit" });
 
@@ -21,9 +20,3 @@ async function handler(_args) {
     if (signal) console.log(`Process killed with signal: ${signal}`);
   });
 }
-
-export const shell = {
-  COMMAND,
-  DESCRIPTION,
-  handler,
-};

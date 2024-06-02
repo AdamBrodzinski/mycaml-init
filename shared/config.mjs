@@ -1,34 +1,9 @@
 import fs from "fs";
-import { exec } from "child_process";
 import TOML from "smol-toml";
+import { debug } from "./logger.mjs";
+import { isDryRun } from "./utils.mjs";
 
 const CONFIG_FILENAME = "mycaml.toml";
-
-const DUNE_MISSING_MSG =
-  "dune is required and is not installed. Please run `opam update; opam install dune` and try again";
-
-export function isCommandMissing(command, msg) {
-  let errMessage = msg ? msg : "Error, command ${command} is not available on the path";
-
-  return new Promise((resolve) => {
-    exec(`which ${command}`, (error, _stdout, stderr) => {
-      if (error || stderr) {
-        console.log(errMessage);
-        resolve(true);
-      } else {
-        resolve(false);
-      }
-    });
-  });
-}
-
-export function isDuneMissing() {
-  return isCommandMissing("dune", DUNE_MISSING_MSG);
-}
-
-export function print(...args) {
-  console.log(...args);
-}
 
 export function parseConfig() {
   try {
@@ -60,19 +35,4 @@ export function writeConfig(configJson) {
 
 function findConfigPath() {
   return `${process.cwd()}/${CONFIG_FILENAME}`;
-}
-
-export function debug(...args) {
-  if (!!process.env.MYCAML_VERBOSE) {
-    console.log(...args);
-  }
-}
-
-export function isDryRun() {
-  return !!process.env.MYCAML_DRY_RUN;
-}
-
-export function updateOpam() {
-  // TODO: check for last opam update and run
-  console.log("TODO");
 }

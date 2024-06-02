@@ -1,7 +1,13 @@
-import { parseConfig, writeConfig, debug, isDuneMissing } from "../utils.mjs";
+import { isDuneMissing } from "../shared/platform.mjs";
+import { parseConfig, writeConfig } from "../shared/config.mjs";
+import { debug } from "../shared/logger.mjs";
 
-const COMMAND = "remove <package>";
-const DESCRIPTION = "Remove packages from your project";
+export function attachCommandRemove(program) {
+  program
+    .command("remove <package>")
+    .description("Remove packages from your project")
+    .action(handler);
+}
 
 async function handler(packageName) {
   if (await isDuneMissing()) return;
@@ -23,9 +29,3 @@ async function handler(packageName) {
     `Removed ${packageName} from project. If you would like to uninstall this from your global opam, run:  opam uninstall ${packageName}`,
   );
 }
-
-export const remove = {
-  COMMAND,
-  DESCRIPTION,
-  handler,
-};

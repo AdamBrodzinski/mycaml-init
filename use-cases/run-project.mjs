@@ -1,8 +1,15 @@
 import { spawn } from "child_process";
-import { print, isDuneMissing, parseConfig } from "../utils.mjs";
+import { isDuneMissing } from "../shared/platform.mjs";
+import { parseConfig } from "../shared/config.mjs";
+import { print } from "../shared/logger.mjs";
 
-const COMMAND = "run";
-const DESCRIPTION = "Run your project with Dune exec";
+export function attachCommandRun(program) {
+  program
+    .command("run")
+    .description("Run your project with Dune exec")
+    .option("-w, --watch", "Automatically restart on change")
+    .action(handler);
+}
 
 async function handler(opts, _command) {
   if (await isDuneMissing()) return;
@@ -34,9 +41,3 @@ async function handler(opts, _command) {
     if (signal) print(`Process killed with signal: ${signal}`);
   });
 }
-
-export const run = {
-  COMMAND,
-  DESCRIPTION,
-  handler,
-};
